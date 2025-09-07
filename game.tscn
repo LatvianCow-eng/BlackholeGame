@@ -1,9 +1,11 @@
-[gd_scene load_steps=18 format=3 uid="uid://cbh6equa7imuh"]
+[gd_scene load_steps=21 format=3 uid="uid://cbh6equa7imuh"]
 
+[ext_resource type="Script" uid="uid://17hx0mu02xm1" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="Script" uid="uid://bdfb7fg70dirn" path="res://player.gd" id="1_e2o6t"]
 [ext_resource type="Texture2D" uid="uid://huxrmuw0lco4" path="res://DinoSprites - vita.png" id="2_feb5d"]
 [ext_resource type="Texture2D" uid="uid://bvxbasy7mow2" path="res://Blackhole.png" id="3_feb5d"]
 [ext_resource type="Script" uid="uid://ci5m4il58nfr7" path="res://area_2d.gd" id="4_fc0e3"]
+[ext_resource type="Script" uid="uid://c35a2tih168ju" path="res://blackhole.gd" id="5_ryrav"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fc0e3"]
 atlas = ExtResource("2_feb5d")
@@ -95,7 +97,14 @@ height = 16.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_feb5d"]
 radius = 100.08
 
+[sub_resource type="Curve2D" id="Curve2D_ryrav"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -64, -64, 0, 0, 0, 0, 1216, -64, 0, 0, 0, 0, 1216, 704, 0, 0, 0, 0, -64, 704, 0, 0, 0, 0, -64, -64)
+}
+point_count = 5
+
 [node name="Game" type="Node2D"]
+script = ExtResource("1_7jktm")
 
 [node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("bh")]
 scale = Vector2(3, 3)
@@ -114,15 +123,26 @@ position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_7sc4i")
 
 [node name="Blackhole" type="Sprite2D" parent="."]
-position = Vector2(589, 354)
+position = Vector2(548, 300)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_feb5d")
+script = ExtResource("5_ryrav")
 
 [node name="Area2D" type="Area2D" parent="Blackhole"]
 script = ExtResource("4_fc0e3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Blackhole/Area2D"]
 shape = SubResource("CircleShape2D_feb5d")
-disabled = true
 
-[connection signal="body_entered" from="Blackhole/Area2D" to="Blackhole/Area2D" method="_on_body_entered"]
+[node name="SpawnPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_ryrav")
+
+[node name="SpawnPathProgress" type="PathFollow2D" parent="SpawnPath"]
+position = Vector2(-64, -64)
+
+[node name="rock_spawner" type="Timer" parent="."]
+process_callback = 0
+wait_time = 5.0
+
+[connection signal="body_entered" from="Blackhole/Area2D" to="Player" method="_on_area_2d_body_entered"]
+[connection signal="timeout" from="rock_spawner" to="." method="_on_rock_spawner_timeout"]

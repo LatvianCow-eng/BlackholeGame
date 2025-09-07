@@ -34,3 +34,6 @@ func _physics_process(delta):
 
 func blackhole_pull():
 	position += position.direction_to(Vector2(bh.position.x, bh.position.y)) * bh.scale / 2
+
+func _on_area_2d_body_entered(body):
+	print("You died!")
