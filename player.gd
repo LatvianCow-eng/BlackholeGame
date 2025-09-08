@@ -36,4 +36,9 @@ func blackhole_pull():
 	position += position.direction_to(Vector2(bh.position.x, bh.position.y)) * bh.scale / 2
 
 func _on_area_2d_body_entered(body):
+	z_index = 3
+	for n in 500:
+		position += position.direction_to(Vector2(bh.position.x, bh.position.y)) * bh.scale / 2
+		await get_tree().create_timer(0.008).timeout
+		rotate(0.1)
 	print("You died!")

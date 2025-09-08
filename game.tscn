@@ -107,6 +107,7 @@ point_count = 5
 script = ExtResource("1_7jktm")
 
 [node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("bh")]
+z_index = 1
 scale = Vector2(3, 3)
 script = ExtResource("1_e2o6t")
 bh = NodePath("../Blackhole")
@@ -123,13 +124,15 @@ position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_7sc4i")
 
 [node name="Blackhole" type="Sprite2D" parent="."]
-position = Vector2(548, 300)
+z_index = 2
+position = Vector2(576, 326)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_feb5d")
 script = ExtResource("5_ryrav")
 
-[node name="Area2D" type="Area2D" parent="Blackhole"]
+[node name="Area2D" type="Area2D" parent="Blackhole" node_paths=PackedStringArray("bh")]
 script = ExtResource("4_fc0e3")
+bh = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Blackhole/Area2D"]
 shape = SubResource("CircleShape2D_feb5d")
