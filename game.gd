@@ -22,3 +22,7 @@ func _on_rock_spawner_timeout():
 func _on_score_timer_timeout():
 	if !Global.loss:
 		Global.score += 1
+
+func _on_tick_timer_timeout():
+	Global.increase_blackhole_size = true
+	Global.tick += 1

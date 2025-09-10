@@ -21,8 +21,8 @@ texture = ExtResource("1_o0qsl")
 position = Vector2(0.5, 0.5)
 shape = SubResource("CircleShape2D_68h2w")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="rockArea" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="rockArea"]
 position = Vector2(0.5, 0.5)
 shape = SubResource("CircleShape2D_wecdg")
