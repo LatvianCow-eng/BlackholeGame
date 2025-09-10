@@ -1,11 +1,16 @@
-[gd_scene load_steps=21 format=3 uid="uid://cbh6equa7imuh"]
+[gd_scene load_steps=28 format=3 uid="uid://cbh6equa7imuh"]
 
 [ext_resource type="Script" uid="uid://17hx0mu02xm1" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="Script" uid="uid://bdfb7fg70dirn" path="res://player.gd" id="1_e2o6t"]
 [ext_resource type="Texture2D" uid="uid://huxrmuw0lco4" path="res://DinoSprites - vita.png" id="2_feb5d"]
 [ext_resource type="Texture2D" uid="uid://bvxbasy7mow2" path="res://Blackhole.png" id="3_feb5d"]
 [ext_resource type="Script" uid="uid://ci5m4il58nfr7" path="res://area_2d.gd" id="4_fc0e3"]
+[ext_resource type="Script" uid="uid://q05bcmfnnh2" path="res://dash_timer.gd" id="4_hve3p"]
 [ext_resource type="Script" uid="uid://c35a2tih168ju" path="res://blackhole.gd" id="5_ryrav"]
+[ext_resource type="Script" uid="uid://d234nlbqbg5ji" path="res://score.gd" id="7_eow3j"]
+[ext_resource type="FontFile" uid="uid://22gvvdy8n8re" path="res://Micro5-Regular.ttf" id="7_j5wjh"]
+[ext_resource type="FontFile" uid="uid://185h1hksvn6b" path="res://Micro5-Regular2.ttf" id="9_mfdv2"]
+[ext_resource type="Script" uid="uid://cuyphw60pc4n7" path="res://dash_tracker.gd" id="10_mfdv2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fc0e3"]
 atlas = ExtResource("2_feb5d")
@@ -22,6 +27,10 @@ region = Rect2(48, 0, 24, 24)
 [sub_resource type="AtlasTexture" id="AtlasTexture_eow3j"]
 atlas = ExtResource("2_feb5d")
 region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7sc4i"]
+atlas = ExtResource("2_feb5d")
+region = Rect2(384, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j5wjh"]
 atlas = ExtResource("2_feb5d")
@@ -68,6 +77,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_7sc4i")
+}],
+"loop": true,
+"name": &"Loss",
+"speed": 0.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_j5wjh")
 }, {
 "duration": 1.0,
@@ -103,25 +120,33 @@ _data = {
 }
 point_count = 5
 
+[sub_resource type="LabelSettings" id="LabelSettings_vef74"]
+font = ExtResource("9_mfdv2")
+font_size = 32
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
 [node name="Game" type="Node2D"]
 script = ExtResource("1_7jktm")
 
-[node name="Player" type="CharacterBody2D" parent="." node_paths=PackedStringArray("bh")]
+[node name="Player" type="CharacterBody2D" parent="."]
 z_index = 1
 scale = Vector2(3, 3)
 script = ExtResource("1_e2o6t")
-bh = NodePath("../Blackhole")
 
 [node name="anim" type="AnimatedSprite2D" parent="Player"]
 unique_name_in_owner = true
 sprite_frames = SubResource("SpriteFrames_215e1")
 animation = &"Walking"
 autoplay = "Idle"
-frame_progress = 0.286645
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_7sc4i")
+
+[node name="Dash timer" type="Timer" parent="Player"]
+one_shot = true
+script = ExtResource("4_hve3p")
 
 [node name="Blackhole" type="Sprite2D" parent="."]
 z_index = 2
@@ -131,6 +156,7 @@ texture = ExtResource("3_feb5d")
 script = ExtResource("5_ryrav")
 
 [node name="Area2D" type="Area2D" parent="Blackhole" node_paths=PackedStringArray("bh")]
+scale = Vector2(0.95, 0.95)
 script = ExtResource("4_fc0e3")
 bh = NodePath("..")
 
@@ -147,5 +173,32 @@ position = Vector2(-64, -64)
 process_callback = 0
 wait_time = 5.0
 
+[node name="score_timer" type="Timer" parent="."]
+
+[node name="score" type="Label" parent="."]
+z_index = 4
+offset_left = 960.0
+offset_right = 1144.0
+offset_bottom = 33.0
+theme_override_fonts/font = ExtResource("7_j5wjh")
+theme_override_font_sizes/font_size = 1
+label_settings = SubResource("LabelSettings_vef74")
+horizontal_alignment = 2
+script = ExtResource("7_eow3j")
+
+[node name="dash_tracker" type="Label" parent="."]
+z_index = 4
+offset_left = 936.0
+offset_top = 36.0
+offset_right = 1120.0
+offset_bottom = 69.0
+theme_override_fonts/font = ExtResource("7_j5wjh")
+theme_override_font_sizes/font_size = 1
+label_settings = SubResource("LabelSettings_vef74")
+horizontal_alignment = 2
+script = ExtResource("10_mfdv2")
+
+[connection signal="timeout" from="Player/Dash timer" to="Player" method="_on_dash_timer_timeout"]
 [connection signal="body_entered" from="Blackhole/Area2D" to="Player" method="_on_area_2d_body_entered"]
 [connection signal="timeout" from="rock_spawner" to="." method="_on_rock_spawner_timeout"]
+[connection signal="timeout" from="score_timer" to="." method="_on_score_timer_timeout"]
