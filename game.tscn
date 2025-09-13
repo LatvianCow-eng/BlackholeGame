@@ -1,16 +1,17 @@
-[gd_scene load_steps=30 format=4 uid="uid://cbh6equa7imuh"]
+[gd_scene load_steps=34 format=4 uid="uid://cbh6equa7imuh"]
 
 [ext_resource type="Script" uid="uid://17hx0mu02xm1" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="Script" uid="uid://bdfb7fg70dirn" path="res://player.gd" id="1_e2o6t"]
 [ext_resource type="Texture2D" uid="uid://huxrmuw0lco4" path="res://DinoSprites - vita.png" id="2_feb5d"]
 [ext_resource type="Texture2D" uid="uid://bvxbasy7mow2" path="res://Blackhole.png" id="3_feb5d"]
-[ext_resource type="Script" uid="uid://ci5m4il58nfr7" path="res://area_2d.gd" id="4_fc0e3"]
 [ext_resource type="Script" uid="uid://q05bcmfnnh2" path="res://dash_timer.gd" id="4_hve3p"]
-[ext_resource type="Script" uid="uid://c35a2tih168ju" path="res://blackhole.gd" id="5_ryrav"]
 [ext_resource type="Script" uid="uid://d234nlbqbg5ji" path="res://score.gd" id="7_eow3j"]
 [ext_resource type="FontFile" uid="uid://22gvvdy8n8re" path="res://Micro5-Regular.ttf" id="7_j5wjh"]
 [ext_resource type="Script" uid="uid://cuyphw60pc4n7" path="res://dash_tracker.gd" id="10_mfdv2"]
+[ext_resource type="Script" uid="uid://b8bb68xn55bkh" path="res://game_over_text.gd" id="11_iotsf"]
 [ext_resource type="Script" uid="uid://1b3gm53j68lu" path="res://fps.gd" id="11_mfdv2"]
+[ext_resource type="AudioStream" uid="uid://dkgu3ti1glra2" path="res://RockDestroySFX.ogg" id="12_iotsf"]
+[ext_resource type="Script" uid="uid://dgjbm36widah6" path="res://game_over_score.gd" id="12_lc2xo"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fc0e3"]
 atlas = ExtResource("2_feb5d")
@@ -179,6 +180,26 @@ font_size = 32
 outline_size = 10
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hve3p"]
+bg_color = Color(0, 0.392157, 0, 0.392157)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0.392157, 0, 0.784314)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_mfdv2"]
+font_size = 64
+font_color = Color(0.784314, 1, 0.784314, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_hve3p"]
+font_size = 32
+font_color = Color(0.784314, 1, 0.784314, 1)
+
 [node name="Game" type="Node2D"]
 script = ExtResource("1_7jktm")
 
@@ -201,17 +222,21 @@ shape = SubResource("CapsuleShape2D_7sc4i")
 one_shot = true
 script = ExtResource("4_hve3p")
 
+[node name="AudioListener2D" type="AudioListener2D" parent="Player"]
+
+[node name="Rock_destroy_sound" type="AudioStreamPlayer2D" parent="Player"]
+scale = Vector2(0.333333, 0.333333)
+stream = ExtResource("12_iotsf")
+pitch_scale = 0.5
+
 [node name="Blackhole" type="Sprite2D" parent="."]
 z_index = 2
 position = Vector2(576, 326)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_feb5d")
-script = ExtResource("5_ryrav")
 
-[node name="Area2D" type="Area2D" parent="Blackhole" node_paths=PackedStringArray("bh")]
+[node name="Area2D" type="Area2D" parent="Blackhole"]
 scale = Vector2(0.95, 0.95)
-script = ExtResource("4_fc0e3")
-bh = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Blackhole/Area2D"]
 shape = SubResource("CircleShape2D_feb5d")
@@ -267,9 +292,73 @@ label_settings = SubResource("LabelSettings_vef74")
 horizontal_alignment = 2
 script = ExtResource("11_mfdv2")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Loss_screen" type="ColorRect" parent="CanvasLayer"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Loss_screen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -196.0
+offset_top = -212.0
+offset_right = 196.0
+offset_bottom = 212.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hve3p")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Loss_screen/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Loss_screen/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Game_over_text" type="Label" parent="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "GAME OVER"
+label_settings = SubResource("LabelSettings_mfdv2")
+script = ExtResource("11_iotsf")
+
+[node name="Game_over_score" type="Label" parent="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+label_settings = SubResource("LabelSettings_hve3p")
+horizontal_alignment = 1
+script = ExtResource("12_lc2xo")
+
+[node name="Play" type="Button" parent="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Play Again"
+
+[node name="options" type="Button" parent="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Options"
+
+[node name="Quit" type="Button" parent="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Quit"
+
 [connection signal="timeout" from="Player/Dash timer" to="Player" method="_on_dash_timer_timeout"]
 [connection signal="body_entered" from="Blackhole/Area2D" to="Player" method="_on_area_2d_body_entered"]
 [connection signal="timeout" from="rock_spawner" to="." method="_on_rock_spawner_timeout"]
 [connection signal="timeout" from="score_timer" to="." method="_on_score_timer_timeout"]
 [connection signal="timeout" from="score_timer" to="FPS" method="_on_score_timer_timeout"]
 [connection signal="timeout" from="tick_timer" to="." method="_on_tick_timer_timeout"]
+[connection signal="pressed" from="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer/options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="CanvasLayer/Loss_screen/PanelContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

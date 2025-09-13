@@ -12,6 +12,9 @@ var dash_ready = true
 
 var bh : Sprite2D
 
+func _ready():
+	Global.player_body = self
+
 func _physics_process(delta):
 	bh = Global.blackhole_sprite
 	delta_time = delta
@@ -20,6 +23,7 @@ func _physics_process(delta):
 		var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		if Input.is_action_just_pressed("Dash"):
 			if !dashing and dash_ready and direction:
+				Global.player_dash_direction = direction
 				velocity.x = move_toward(velocity.x, 0, speed)
 				velocity.y = move_toward(velocity.y, 0, speed)
 				dash_goal = position + direction * 200
@@ -27,9 +31,10 @@ func _physics_process(delta):
 
 		if dashing:
 			%anim.speed_scale = 3
-			position += position.direction_to(dash_goal) * 900 * delta
-			dash_ready = false
+			Global.dash_force = position.distance_to(dash_goal)
 			Global.dash_started = true
+			dash_ready = false
+			position += position.direction_to(dash_goal) * 900 * delta
 			if position.distance_to(dash_goal) < 20:
 				dashing = false
 				%anim.speed_scale = 1
@@ -62,7 +67,9 @@ func _physics_process(delta):
 func blackhole_pull():
 		position += position.direction_to(Vector2(bh.position.x, bh.position.y)) * pow(bh.scale.x + 0.5, 2) * 15 * delta_time
 
+#Player enters blackhole
 func _on_area_2d_body_entered(body):
+	%Loss_screen.visible = true
 	Global.loss = true
 	z_index = 3
 	%anim.animation = "Loss"

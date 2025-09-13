@@ -4,6 +4,8 @@ var rock = preload("res://rock.tscn")
 
 func _ready():
 	new_game()
+	Global.rock_destroy_sound = $Player/Rock_destroy_sound
+	Global.blackhole_sprite = $Blackhole
 
 func new_game():
 	$rock_spawner.start()
@@ -26,3 +28,16 @@ func _on_score_timer_timeout():
 func _on_tick_timer_timeout():
 	Global.increase_blackhole_size = true
 	Global.tick += 1
+
+
+func _on_play_pressed():
+	get_tree().change_scene_to_file("res://game.tscn")
+	Global.reset_globals()
+
+
+func _on_options_pressed():
+	pass
+
+
+func _on_quit_pressed():
+	get_tree().quit()

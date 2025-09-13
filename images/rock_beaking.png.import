@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://byy837qtjftta"
-path="res://.godot/imported/rock.png-2fd843802c09e25179696ea826da5ac7.ctex"
+uid="uid://up60ygv68cls"
+path="res://.godot/imported/rock_beaking.png-e5400c461d34faf09eb0c6962d17bae4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://rock.png"
-dest_files=["res://.godot/imported/rock.png-2fd843802c09e25179696ea826da5ac7.ctex"]
+source_file="res://images/rock_beaking.png"
+dest_files=["res://.godot/imported/rock_beaking.png-e5400c461d34faf09eb0c6962d17bae4.ctex"]
 
 [params]
 
